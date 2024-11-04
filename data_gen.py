@@ -10,8 +10,16 @@ class NormalVariable:
     def set_mean(self, new_mean: float):
         self.__mean = new_mean
     
-    def get(self, n: int = 1) -> float | np.ndarray[float]:
-        result = np.zeros(n) + self.__mean + (self.__rng.normal(size=n) * self.__std)
+    def get_base(self) -> float:
+        return self.__mean
+    
+    def get(self, n: int = 1, means: np.ndarray[float] = None) -> float | np.ndarray[float]:
+        if means is None:
+            result = np.zeros(n) + self.__mean
+        else:
+            result = np.zeros(n) + means
+
+        result += (self.__rng.normal(size=n) * self.__std)
         return result[0] if n == 1 else result
 
 
@@ -28,6 +36,8 @@ class VariableRelation:
         result = np.zeros((len(self.__inputs) + 1, n))
         for i, (input, weight) in enumerate(self.__inputs):
             result[i] = input.get(n)
-            result[-1] += result[i] * weight
+            result[-1] += input.get_base() * weight
+        
+        result[-1] = self.__output.get(n, result[-1])
 
         return result
