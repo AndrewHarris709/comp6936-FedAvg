@@ -1,12 +1,12 @@
 from sklearn.metrics import mean_squared_error
 import numpy as np
 
-def fit_keras_model(model, X, Y, batchSize = 1, epochs = 100):
+def fit_keras_model(model, X, Y, batchSize = 1, epochs = 200):
     return model.fit(
         X,
         Y,
         batch_size = batchSize,
-        epochs = epochs,
+        epochs = epochs
     )
 
 def get_keras_loss(model, X, Y):
