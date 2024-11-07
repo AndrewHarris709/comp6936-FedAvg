@@ -1,12 +1,11 @@
 from sklearn import datasets
 import numpy as np
-# import matplotlib.pyplot as plt
-
 from linearRegression.models import *
 from linearRegression.utils import *
+from linearRegression.plots import plot_scatter_line
 
 columnIdx = 3
-modelType = "sklearn"
+modelType = "keras"
 
 data_X, data_Y = datasets.load_diabetes(return_X_y = True)
 if(columnIdx >= 0):
@@ -31,15 +30,4 @@ else:
     print(f"Sklearn Weights: {weight}")
     print(f"Sklearn Biases: {bias}")
 
-# plt.plot(history.history["loss"])
-# plt.plot(history.history["val_loss"])
-# plt.title(f"Linear Regression MSE")
-# plt.ylabel("Loss")
-# plt.xlabel("Epoch")
-# plt.legend(["Train", "Val"], loc = "upper left")
-# plt.show()
-
-# plt.scatter(test_X, test_Y)
-# plt.plot(test_X, model.predict(test_X), color = "black")
-
-# plt.show()
+plot_scatter_line(data_X, data_Y, weight, bias)
