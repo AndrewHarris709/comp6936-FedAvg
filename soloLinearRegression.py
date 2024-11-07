@@ -3,22 +3,29 @@ import numpy as np
 # import matplotlib.pyplot as plt
 
 
-from linearRegression.models import get_keras_model
-from linearRegression.utils import fit_keras_model
+from linearRegression.models import *
+from linearRegression.utils import *
 
 columnIdx = 3
+modelType = "sklearn"
 
 data_X, data_Y = datasets.load_diabetes(return_X_y = True)
 if(columnIdx >= 0):
     data_X = data_X[:, np.newaxis, columnIdx]
 
-if(len(data_Y.shape) == 1):
-    outDim = 1
-else:
-    outDim = data_Y.shape[1]
 
-model = get_keras_model(inputDim = data_X.shape[1], outputDim = outDim)
-history = fit_keras_model(model, data_X, data_Y)
+if(modelType == "keras"):
+    if(len(data_Y.shape) == 1):
+        outDim = 1
+    else:
+        outDim = data_Y.shape[1]
+    model = get_keras_model(inputDim = data_X.shape[1], outputDim = outDim)
+    history = fit_keras_model(model, data_X, data_Y)
+    print(f"Keras Loss: {get_keras_loss(model, data_X, data_Y)}")
+else:
+    model = get_sklearn_model()
+    model = fit_sklearn_model(model, data_X, data_Y)
+    print(f"Sklearn Loss: {get_sklearn_loss(model.predict(data_X), data_Y)}")
 
 # weightDense1 = model.layers[1].get_weights()[0]
 # biasDense1 = model.layers[1].get_weights()[1]
@@ -27,8 +34,6 @@ history = fit_keras_model(model, data_X, data_Y)
 # finalWeight = weightDense1 * weightDense2
 # finalBias = weightDense2 * biasDense1 + biasDense2
 
-pred_loss = model.evaluate(data_X, data_Y)
-print(f"Prediction Loss: {pred_loss}")
 # print(f"Coefficients (weights): {finalWeight}")
 # print(f"Independent Term (bias): {finalBias}")
 

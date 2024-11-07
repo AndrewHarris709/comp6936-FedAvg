@@ -1,4 +1,5 @@
 import keras
+from sklearn import linear_model
 
 def get_keras_model(inputDim, outputDim):
     inputs = keras.Input(shape = (inputDim,))
@@ -12,3 +13,6 @@ def get_keras_model(inputDim, outputDim):
         metrics = []
     )
     return model
+
+def get_sklearn_model():
+    return linear_model.LinearRegression()
