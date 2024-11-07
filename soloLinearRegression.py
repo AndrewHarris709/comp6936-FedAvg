@@ -3,7 +3,8 @@ import numpy as np
 # import matplotlib.pyplot as plt
 
 
-from linearRegression.models import get_model
+from linearRegression.models import get_keras_model
+from linearRegression.utils import fit_keras_model
 
 columnIdx = 3
 
@@ -16,13 +17,8 @@ if(len(data_Y.shape) == 1):
 else:
     outDim = data_Y.shape[1]
 
-model = get_model(inputDim = data_X.shape[1], outputDim = outDim)
-history = model.fit(
-    data_X,
-    data_Y,
-    batch_size = 1,
-    epochs = 150,
-)
+model = get_keras_model(inputDim = data_X.shape[1], outputDim = outDim)
+history = fit_keras_model(model, data_X, data_Y)
 
 # weightDense1 = model.layers[1].get_weights()[0]
 # biasDense1 = model.layers[1].get_weights()[1]

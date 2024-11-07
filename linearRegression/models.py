@@ -1,6 +1,6 @@
 import keras
 
-def get_model(inputDim, outputDim):
+def get_keras_model(inputDim, outputDim):
     inputs = keras.Input(shape = (inputDim,))
     x = keras.layers.Dense(outputDim, activation = "linear")(inputs)
     outputs = keras.layers.Dense(outputDim)(x)
