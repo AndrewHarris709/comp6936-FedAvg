@@ -12,11 +12,14 @@ class Server:
         m = int(max(self.C * len(self.clients), 1))
         selectedClients = np.random.choice(self.clients, m, replace = False)
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(lambda c: c.train(self.weights), client) for client in selectedClients]
-            for future in concurrent.futures.as_completed(futures):
-                clientsRes.append(future.result())
+            outcomes = [executor.submit(lambda c: c.train(self.weights), client) for client in selectedClients]
+            for outcome in concurrent.futures.as_completed(outcomes):
+                clientsRes.append(outcome.result())
         self.update_weights(clientsRes)
 
     def update_weights(self, clientsResults):
-        print("-------------")
-        print(clientsResults)
+        newWeights = np.zeros(shape = clientsResults[0]["weights"].shape)
+        Nr = sum(res["numRecords"] for res in clientsResults)
+        for res in clientsResults:
+            newWeights += res["weights"] * (res["numRecords"] / Nr)
+        self.weights = newWeights
