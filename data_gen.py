@@ -46,18 +46,15 @@ class NormalVariable(GeneratorVariable):
 class VariableRelation:
 
     def __init__(self, inputs: list[tuple[NormalVariable]], output: NormalVariable):
-        if type(inputs[0]) is NormalVariable:
-            raise TypeError("Weights must be included in `inputs`!")
-
         self.__inputs = inputs
         self.__output = output
     
     def get(self, n: int = 1) -> np.ndarray[float]:
         result = np.zeros((len(self.__inputs) + 1, n))
-        for i, (input, weight) in enumerate(self.__inputs):
-            bases = input.get_bases()
+        for i, input in enumerate(self.__inputs):
+            bases = input.get_bases(n)
             result[i] = input.generate(bases)
-            result[-1] += bases * weight
+            result[-1] += bases * input.weight
         
         result[-1] = self.__output.generate(result[-1])
 

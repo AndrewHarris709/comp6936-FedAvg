@@ -47,16 +47,33 @@ def test_generate_noise():
     assert np.mean(result) == approx(0, abs=0.1)
 
 
-def test_error_on_no_weights(static_var, unit_var):
-    with raises(TypeError):
-        rel = VariableRelation([static_var], unit_var)
-
-
 def test_direct_relation():
     var1 = NormalVariable(lower_base=3, upper_base=3, weight=2, std=0, noise=0)
     var2 = NormalVariable(lower_base=3, upper_base=3, std=0, noise=0)
 
-    rel = VariableRelation([(var1, 2)], var2)
+    rel = VariableRelation([var1], var2)
     assert np.array_equal(rel.get(), [[3], [6]])
     assert np.array_equal(rel.get(5), [[3, 3, 3, 3, 3], [6, 6, 6, 6, 6]])
 
+
+def test_multi_relation():
+    var1 = NormalVariable(lower_base=3, upper_base=3, weight=2, std=0, noise=0)
+    var2 = NormalVariable(lower_base=4, upper_base=4, weight=1, std=0, noise=0)
+    var3 = NormalVariable(lower_base=3, upper_base=3, std=0, noise=0)
+
+    rel = VariableRelation([var1, var2], var3)
+    assert np.array_equal(rel.get(), [[3], [4], [10]])
+    assert np.array_equal(rel.get(3), [[3, 3, 3], [4, 4, 4], [10, 10, 10]])
+
+
+def test_multi_relation_std():
+    var1 = NormalVariable(lower_base=3, upper_base=3, weight=2, std=1, noise=0)
+    var2 = NormalVariable(lower_base=3, upper_base=3, weight=-1, std=0, noise=0)
+    var3 = NormalVariable(lower_base=3, upper_base=3, std=0, noise=0)
+
+    rel = VariableRelation([var1, var2], var3)
+    result = rel.get(1000)
+    assert not np.array_equal(result, np.full((3, 1000), fill_value=3))
+
+    closeness = np.isclose(result.mean(axis=1), np.full(3, fill_value=3), atol=0.1)
+    assert closeness.all()
