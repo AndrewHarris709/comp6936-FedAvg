@@ -23,4 +23,4 @@ server = Server(
 )
 
 server.start_clients()
-server.test_model()
+server.test_model(columnIdx = 3)

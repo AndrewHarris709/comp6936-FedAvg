@@ -12,7 +12,7 @@ class Server:
 
     def start_clients(self):
         clientsRes = []
-        m = int(max(self.C * len(self.clients), 1))
+        m = int(max(round(self.C * len(self.clients)), 1))
         selectedClients = np.random.choice(self.clients, m, replace = False)
         with concurrent.futures.ThreadPoolExecutor() as executor:
             outcomes = [executor.submit(lambda c: c.train(self.weights), client) for client in selectedClients]
@@ -31,11 +31,12 @@ class Server:
                 newWeights[idx] += (res["weights"][idx] * (res["numRecords"] / Nr))
         self.weights = newWeights
 
-    def test_model(self):
+    def test_model(self, columnIdx = -1):
         if(not self.model):
-            inputDim, outputDim = get_dataset_shape(columnIdx = 3)
+            inputDim, outputDim = get_dataset_shape(columnIdx = columnIdx)
             self.model = get_keras_model(inputDim = inputDim, outputDim = outputDim)
         self.model.set_weights(self.weights)
         w, b = get_keras_params(self.model)
         print(f"Server Weight: {w}")
-        print(f"Server Bias: {b}")        
+        print(f"Server Bias: {b}")
+        return w, b
