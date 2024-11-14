@@ -1,4 +1,4 @@
-from data_gen import GeneratorVariable, NormalVariable, VariableRelation
+from generators import GeneratorVariable, NormalVariable, VariableRelation
 from pytest import fixture, approx, raises
 import numpy as np
 
