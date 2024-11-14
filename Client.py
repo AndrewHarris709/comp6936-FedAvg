@@ -10,6 +10,8 @@ class Client():
         self.model = None
 
     def add_data(self, new_X, new_Y):
+        # TODO
+        # What happens where is no data at start --> Waiting for data generation
         if(new_X.shape[0] == 1):
             self.data_X.append(new_X)
             self.data_Y.append(new_Y)
