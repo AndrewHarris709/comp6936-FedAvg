@@ -1,13 +1,13 @@
 import numpy as np
-from linearRegression.models import get_keras_model
-from linearRegression.utils import fit_keras_model, get_keras_loss, get_keras_params
+from linearRegression.models import get_model
+from linearRegression.utils import fit_model, get_loss, get_params
 
 class Client():
     def __init__(self, name, mode):
         self.name = name
+        self.mode = mode
         self.data_X = []
         self.data_Y = []
-        self.mode = mode
         self.model = None
 
     def add_data(self, new_X, new_Y):
@@ -24,23 +24,28 @@ class Client():
             return None
 
         print(f"Start Training {self.name}...")
+        report = {}
         X = np.array(self.data_X)
         Y = np.array(self.data_Y)
-        if(len(Y.shape) == 1):
-            outDim = 1
-        else:
-            outDim = Y.shape[1]
+        report["numRecords"] = X.shape[0]
 
         if(not self.model):
-            self.model = get_keras_model(inputDim = X.shape[1], outputDim = outDim)
-        self.model.set_weights(weights)
-        fit_keras_model(self.model, X, Y)
-        print(f"Loss {self.name}: {get_keras_loss(self.model, X, Y)}")
-        weight, bias = get_keras_params(self.model)
+            self.model = get_model(mode = self.mode, inputDim = X.shape[1], outputDim = 1 if len(Y.shape) == 1 else Y.shape[1])
+
+        if(self.mode == "keras"):
+            self.model.set_weights(weights)
+            fit_model(mode = self.mode, model = self.model, X = X, Y = Y)
+            report["weights"] = self.model.get_weights()
+        else:
+            self.model = fit_model(mode = self.mode, model = self.model, X = X, Y = Y, weights = weights[0], biases = weights[1])
+            report["weights"] = get_params(mode = self.mode, model = self.model)
+
+        print(f"{self.mode} Loss {self.name}: {get_loss(mode = self.mode, model = self.model, X = X, Y = Y, pred_Y = self.model.predict(X), target_Y = Y)}")
+        weight, bias = get_params(mode = self.mode, model = self.model)
         print(f"Weight {self.name}: {weight}")
         print(f"Bias {self.name}: {bias}")
 
-        return {"weights": self.model.get_weights(), "numRecords": X.shape[0]}
+        return report
 
     def get_model(self):
         return self.model

@@ -1,0 +1,16 @@
+{
+    "mode": "sklearnSGD",
+    "columnIdx": 3,
+    "server": {
+        "participation_ratio": 1
+    },
+    "clients": {
+        "names": [
+            "Ali",
+            "Andrew",
+            "Mahdi",
+            "James",
+            "Victoria"
+        ]
+    }
+}
