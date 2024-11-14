@@ -3,15 +3,14 @@ from linearRegression.models import get_keras_model
 from linearRegression.utils import fit_keras_model, get_keras_loss, get_keras_params
 
 class Client():
-    def __init__(self, name):
+    def __init__(self, name, mode):
         self.name = name
         self.data_X = []
         self.data_Y = []
+        self.mode = mode
         self.model = None
 
     def add_data(self, new_X, new_Y):
-        # TODO
-        # What happens where is no data at start --> Waiting for data generation
         if(new_X.shape[0] == 1):
             self.data_X.append(new_X)
             self.data_Y.append(new_Y)
@@ -20,6 +19,10 @@ class Client():
             self.data_Y.extend(new_Y)            
 
     def train(self, weights):
+        if(len(self.data_X) == 0 or len(self.data_Y) == 0):
+            print("Waiting for data...")
+            return None
+
         print(f"Start Training {self.name}...")
         X = np.array(self.data_X)
         Y = np.array(self.data_Y)

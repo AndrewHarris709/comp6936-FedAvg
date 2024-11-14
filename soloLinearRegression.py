@@ -1,40 +1,22 @@
-from sklearn import datasets
-import numpy as np
-from linearRegression.models import *
-from linearRegression.utils import *
+from linearRegression.models import get_model
+from linearRegression.utils import fit_model, get_loss, get_params
 from linearRegression.plots import plot_scatter_line
+from linearRegression.utils import get_dataset, get_dataset_shape
 
 columnIdx = 3
-modelType = "sklearnSGD"
+mode = "sklearnSGD"
 
-data_X, data_Y = datasets.load_diabetes(return_X_y = True)
-if(columnIdx >= 0):
-    data_X = data_X[:, np.newaxis, columnIdx]
+data_X, data_Y = get_dataset(columnIdx)
+inDim, outDim = get_dataset_shape(columnIdx)
 
-if(modelType == "keras"):
-    if(len(data_Y.shape) == 1):
-        outDim = 1
-    else:
-        outDim = data_Y.shape[1]
-    model = get_keras_model(inputDim = data_X.shape[1], outputDim = outDim)
-    history = fit_keras_model(model, data_X, data_Y)
-    print(f"Keras Loss: {get_keras_loss(model, data_X, data_Y)}")
-    weight, bias = get_keras_params(model)
-    print(f"Keras Weight: {weight}")
-    print(f"Keras Bias: {bias}")
-elif(modelType == "sklearn"):
-    model = get_sklearn_model()
-    model = fit_sklearn_model(model, data_X, data_Y)
-    print(f"Sklearn Loss: {get_sklearn_loss(model.predict(data_X), data_Y)}")
-    weight, bias = get_sklearn_params(model)
-    print(f"Sklearn Weight: {weight}")
-    print(f"Sklearn Bias: {bias}")
+model = get_model(mode, inputDim = inDim, outputDim = outDim)
+if(mode == "keras"):
+    history = fit_model(mode, model, X = data_X, Y = data_Y)
 else:
-    model = get_SGD_sklearn_model()
-    model = fit_SGD_sklearn_model(model, data_X, data_Y)
-    print(f"SklearnSGD Loss: {get_sklearn_loss(model.predict(data_X), data_Y)}")
-    weight, bias = get_SGD_sklearn_params(model)
-    print(f"SklearnSGD Weight: {weight}")
-    print(f"SklearnSGD Bias: {bias}")    
+    model = fit_model(mode, model, X = data_X, Y = data_Y)
 
+print(f"{mode} Loss: {get_loss(mode, model, X = data_X, Y = data_Y, pred_Y = model.predict(data_X), target_Y = data_Y)}")
+weight, bias = get_params(mode, model)
+print(f"{mode} Weight: {weight}")
+print(f"{mode} Bias: {bias}")
 plot_scatter_line(data_X, data_Y, weight, bias)
