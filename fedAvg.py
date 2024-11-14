@@ -1,14 +1,22 @@
 from Client import Client
 from Server import Server
-from linearRegression.utils import get_keras_initial_weights, get_splitted_dataset
+from linearRegression.utils import get_keras_initial_weights, get_SGD_sklearn_initial_weights, get_splitted_dataset
 
-data_X, data_Y = get_splitted_dataset(numSplits = 5, columnIdx = 3)
+mode = "sklearnSGD"
+columnIdx = 3
 
-clientAli = Client("Ali")
-clientAndrew = Client("Andrew")
-clientMahdi = Client("Mahdi")
-clientJames = Client("James")
-clientVictoria = Client("Victoria")
+if(mode == "keras"):
+    initW = get_keras_initial_weights(columnIdx = columnIdx)
+else:
+    initW = get_SGD_sklearn_initial_weights(columnIdx = columnIdx)
+
+data_X, data_Y = get_splitted_dataset(numSplits = 5, columnIdx = columnIdx)
+
+clientAli = Client(name = "Ali", mode = mode)
+clientAndrew = Client(name = "Andrew", mode = mode)
+clientMahdi = Client(name = "Mahdi", mode = mode)
+clientJames = Client(name = "James", mode = mode)
+clientVictoria = Client(name = "Victoria", mode = mode)
 
 clientAli.add_data(new_X = data_X[0], new_Y = data_Y[0])
 clientAndrew.add_data(new_X = data_X[1], new_Y = data_Y[1])
@@ -18,9 +26,9 @@ clientVictoria.add_data(new_X = data_X[4], new_Y = data_Y[4])
 
 server = Server(
     participationRatio = 0.8,
-    initialWeights = get_keras_initial_weights(columnIdx = 3),
+    initialWeights = initW,
     clients = [clientAli, clientAndrew, clientMahdi, clientJames, clientVictoria]
 )
 
 server.start_clients()
-server.test_model(columnIdx = 3)
+server.test_model(columnIdx = columnIdx)
