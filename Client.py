@@ -38,3 +38,6 @@ class Client():
         print(f"Bias {self.name}: {bias}")
 
         return {"weights": self.model.get_weights(), "numRecords": X.shape[0]}
+
+    def get_model(self):
+        return self.model

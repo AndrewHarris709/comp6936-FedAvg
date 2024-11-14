@@ -40,3 +40,6 @@ class Server:
         print(f"Server Weight: {w}")
         print(f"Server Bias: {b}")
         return w, b
+
+    def get_clients(self):
+        return self.clients

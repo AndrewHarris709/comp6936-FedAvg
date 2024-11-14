@@ -9,7 +9,7 @@ def get_keras_model(inputDim, outputDim):
     model = keras.Model(inputs = inputs, outputs = outputs, name = "LinearRegression")
     model.compile(
         loss = keras.losses.MeanSquaredError(),
-        optimizer = keras.optimizers.Adam(learning_rate = 0.005),
+        optimizer = keras.optimizers.Adam(learning_rate = 0.01),
         metrics = []
     )
     return model
