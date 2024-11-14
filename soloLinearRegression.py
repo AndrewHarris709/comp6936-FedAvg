@@ -5,7 +5,7 @@ from linearRegression.utils import *
 from linearRegression.plots import plot_scatter_line
 
 columnIdx = 3
-modelType = "sklearn"
+modelType = "sklearnSGD"
 
 data_X, data_Y = datasets.load_diabetes(return_X_y = True)
 if(columnIdx >= 0):
@@ -22,12 +22,19 @@ if(modelType == "keras"):
     weight, bias = get_keras_params(model)
     print(f"Keras Weight: {weight}")
     print(f"Keras Bias: {bias}")
-else:
+elif(modelType == "sklearn"):
     model = get_sklearn_model()
     model = fit_sklearn_model(model, data_X, data_Y)
     print(f"Sklearn Loss: {get_sklearn_loss(model.predict(data_X), data_Y)}")
     weight, bias = get_sklearn_params(model)
     print(f"Sklearn Weight: {weight}")
     print(f"Sklearn Bias: {bias}")
+else:
+    model = get_SGD_sklearn_model()
+    model = fit_SGD_sklearn_model(model, data_X, data_Y)
+    print(f"SklearnSGD Loss: {get_sklearn_loss(model.predict(data_X), data_Y)}")
+    weight, bias = get_SGD_sklearn_params(model)
+    print(f"SklearnSGD Weight: {weight}")
+    print(f"SklearnSGD Bias: {bias}")    
 
 plot_scatter_line(data_X, data_Y, weight, bias)

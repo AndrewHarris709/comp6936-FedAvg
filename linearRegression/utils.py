@@ -38,6 +38,12 @@ def get_sklearn_loss(pred_Y, target_Y):
 def get_sklearn_params(model):
     return model.coef_, model.intercept_
 
+def fit_SGD_sklearn_model(model, X, Y):
+    return model.fit(X, Y)
+
+def get_SGD_sklearn_params(model):
+    return model.coef_, model.intercept_
+
 def get_dataset(columnIdx = -1):
     data_X, data_Y = datasets.load_diabetes(return_X_y = True)
     if(columnIdx >= 0):
