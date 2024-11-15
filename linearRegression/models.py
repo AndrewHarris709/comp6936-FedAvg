@@ -20,8 +20,10 @@ def get_sklearn_model():
 def get_SGD_sklearn_model():
     return linear_model.SGDRegressor(
         penalty = None,
+        alpha = 0.0,
         l1_ratio = 0,
-        max_iter = 50000
+        max_iter = 50000,
+        tol = None,
     )
 
 def get_model(mode, inputDim = None, outputDim = None):

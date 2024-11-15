@@ -1,8 +1,8 @@
 {
-    "mode": "sklearnSGD",
+    "mode": "keras",
     "columnIdx": 3,
     "server": {
-        "participation_ratio": 1
+        "participation_ratio": 0.4
     },
     "clients": {
         "names": [

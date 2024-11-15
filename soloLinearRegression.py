@@ -4,7 +4,7 @@ from linearRegression.plots import plot_scatter_line
 from linearRegression.utils import get_dataset, get_dataset_shape
 
 columnIdx = 3
-mode = "sklearnSGD"
+mode = "sklearn"
 
 data_X, data_Y = get_dataset(columnIdx)
 inDim, outDim = get_dataset_shape(columnIdx)
