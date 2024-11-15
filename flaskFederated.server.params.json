@@ -1,0 +1,6 @@
+{
+    "mode": "sklearnSGD",
+    "columnIdx": -1,
+    "participation_ratio": 0.5,
+    "ip": "127.0.0.1:5000"
+}

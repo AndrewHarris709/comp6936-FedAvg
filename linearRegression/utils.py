@@ -98,3 +98,9 @@ def get_code_params(path):
     with open(path, mode = "r", encoding = "utf-8") as f:
         data = json.load(f)
     return data
+
+def get_weights_jsonified(list_of_arrays):
+    return [arr.tolist() for arr in list_of_arrays]
+
+def get_weights_dejsonified(list_of_lists):
+    return [np.array(l) for l in list_of_lists]

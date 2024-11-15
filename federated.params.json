@@ -2,7 +2,8 @@
     "mode": "sklearnSGD",
     "columnIdx": 3,
     "server": {
-        "participation_ratio": 1
+        "participation_ratio": 0.4,
+        "ip": "127.0.0.1:5001"
     },
     "clients": {
         "names": [
@@ -11,6 +12,13 @@
             "Mahdi",
             "James",
             "Victoria"
+        ],
+        "ips":[
+            "127.0.0.1:5001",
+            "127.0.0.1:5002",
+            "127.0.0.1:5003",
+            "127.0.0.1:5004",
+            "127.0.0.1:5005"
         ]
     }
 }
