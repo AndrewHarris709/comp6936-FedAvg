@@ -27,6 +27,9 @@ class Server:
         self.update_weights(clientsRes)
 
     def update_weights(self, clientsResults):
+        if(not any(clientsResults)):
+            return
+        
         Nr = sum(res["numRecords"] for res in clientsResults)
         newWeights = []
         for weights in clientsResults[0]["weights"]:
@@ -38,7 +41,7 @@ class Server:
 
         self.weights = newWeights
 
-    def test_model(self, columnIdx = -1):
+    def update_centralized_model(self, columnIdx):
         if(not self.model):
             inputDim, outputDim = get_dataset_shape(columnIdx = columnIdx)
             self.model = get_model(mode = self.mode, inputDim = inputDim, outputDim = outputDim)
@@ -47,7 +50,10 @@ class Server:
             self.model.set_weights(self.weights)
         else:
             self.model.coef_ = self.weights[0]
-            self.model.intercept_ = self.weights[1]
+            self.model.intercept_ = self.weights[1]        
+
+    def test_model(self, columnIdx = -1):
+        self.update_centralized_model(columnIdx)
         w, b = get_params(mode = self.mode, model = self.model)
         print(f"Server Weight: {w}")
         print(f"Server Bias: {b}")
