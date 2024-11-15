@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from Client import Client
-from Server import Server
+from localFederated.Client import Client
+from localFederated.Server import Server
 from linearRegression.utils import get_initial_weights, get_splitted_dataset, get_code_params
 import sys
 

@@ -1,5 +1,5 @@
-from Client import Client
-from Server import Server
+from localFederated.Client import Client
+from localFederated.Server import Server
 from linearRegression.models import get_model
 from linearRegression.utils import get_initial_weights, fit_model, get_params, get_dataset, get_splitted_dataset
 
