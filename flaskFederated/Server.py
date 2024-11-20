@@ -6,10 +6,10 @@ class Server:
     def __init__(self, participationRatio, initialWeights):
         self.C = participationRatio
         self.clients = []
-        self.weights = initialWeights
         self.m = 0
         self.model = None
         self.clientWs = []
+        self.update_centralized_model(initialWeights)
 
     def start_clients(self):
         if(len(self.clients)):
@@ -31,25 +31,24 @@ class Server:
                 for idx in range(len(res["weights"])):
                     newWeights[idx] += (res["weights"][idx] * (res["numRecords"] / Nr))
 
-            self.weights = newWeights
+            self.update_centralized_model(newWeights)
             self.clientWs = []
 
-    def update_centralized_model(self):
+    def update_centralized_model(self, weights):
         if(not self.model):
             self.model = get_model()
         
-        self.model.coef_ = self.weights[0]
-        self.model.intercept_ = self.weights[1]        
+        self.model.coef_ = weights[0]
+        self.model.intercept_ = weights[1]
 
     def test_model(self):
-        self.update_centralized_model()
         w, b = get_params(model = self.model)
         print(f"Server Weight: {w}")
         print(f"Server Bias: {b}")
         return f"{w}, {b}\n"
     
     def get_weights(self):
-        return self.weights
+        return [self.model.coef_, self.model.intercept_]
 
     def add_client(self, ip):
         self.clients.append(ip)

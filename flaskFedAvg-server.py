@@ -31,7 +31,7 @@ app = Flask(__name__)
 @app.route("/new_client", methods=['POST'])
 def new_client():
     server.add_client(request.json["ip"])
-    return "New Client!\n"
+    return f"New Client! There are now {len(server.clients)} clients connected."
 
 @app.route("/update_weights", methods=['POST'])
 def update_weights():
@@ -43,6 +43,7 @@ def update_weights():
 @app.route("/", methods=['GET'])
 def start_clients():
     selections = server.start_clients()
+    print(selections)
     if selections is False:
         return "No Clients Yet!\n"
     
