@@ -1,36 +1,24 @@
 from linearRegression.models import get_model
-from linearRegression.utils import get_dataset_shape, get_params, get_weights_jsonified, get_weights_dejsonified
-from flask import Flask, request
+from linearRegression.utils import get_params
 import numpy as np
-import requests
 
 class Server:
-    def __init__(self, ip, participationRatio, initialWeights):
+    def __init__(self, participationRatio, initialWeights):
         self.C = participationRatio
         self.clients = []
         self.weights = initialWeights
         self.m = 0
         self.model = None
         self.clientWs = []
-        self.app = Flask(__name__)
-        self.app.add_url_rule("/new_client", view_func = self.new_client, methods = ["POST"])
-        self.app.add_url_rule("/update_weights", view_func = self.update_weights, methods = ["POST"])
-        self.app.add_url_rule("/", view_func = self.start_clients, methods = ["GET"])
-        self.app.add_url_rule("/test", view_func = self.test_model, methods = ["GET"])
-        self.ip = ip
 
     def start_clients(self):
         if(len(self.clients)):
             self.m = int(max(round(self.C * len(self.clients)), 1))
             selectedClients = np.random.choice(self.clients, self.m, replace = False)
-            for clientIP in selectedClients:
-                requests.post(f"http://{clientIP}/train", json = {"new_weights": get_weights_jsonified(self.weights)})
-            return "Trained Clients!\n"
-        return "No Clients Yet!\n"
+            return selectedClients
+        return False
         
-    def update_weights(self):
-        res = request.json
-        res["weights"] = get_weights_dejsonified(res["weights"])
+    def update_weights(self, res):
         self.clientWs.append(res)
 
         if(len(self.clientWs) == self.m):
@@ -46,9 +34,7 @@ class Server:
             self.weights = newWeights
             self.clientWs = []
 
-        return "Update Weights Called!\n"
-
-    def update_centralized_model(self, columnIdx):
+    def update_centralized_model(self):
         if(not self.model):
             self.model = get_model()
         
@@ -56,21 +42,14 @@ class Server:
         self.model.intercept_ = self.weights[1]        
 
     def test_model(self):
-        # Have to send a JSON with columnIdx as a key to get only the desired column!
-        columnIdx = request.json["columnIdx"] if request.is_json else -1
-        self.update_centralized_model(columnIdx)
+        self.update_centralized_model()
         w, b = get_params(model = self.model)
         print(f"Server Weight: {w}")
         print(f"Server Bias: {b}")
         return f"{w}, {b}\n"
+    
+    def get_weights(self):
+        return self.weights
 
-    def get_clients(self):
-        return self.clients
-
-    def new_client(self):
-        self.clients.append(request.json["ip"])
-        return "New Client!\n"
-
-    def start_flask(self):
-        ip, port = self.ip.split(":")
-        self.app.run(host = ip, port = int(port))
+    def add_client(self, ip):
+        self.clients.append(ip)
