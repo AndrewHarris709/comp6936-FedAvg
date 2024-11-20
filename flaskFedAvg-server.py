@@ -22,10 +22,9 @@ else:
 codeParams = get_code_params(jsonPath)
 
 server = Server(
-    mode = codeParams["mode"],
     ip = codeParams["ip"],
     participationRatio = codeParams["participation_ratio"],
-    initialWeights = get_initial_weights(codeParams["mode"], codeParams["columnIdx"])
+    initialWeights = get_initial_weights(codeParams["columnIdx"])
 )
 
 server.start_flask()

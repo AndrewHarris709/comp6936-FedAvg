@@ -22,7 +22,6 @@ data_X, data_Y = get_splitted_dataset(numSplits = numSplits, columnIdx = codePar
 
 client = Client(
     name = codeParams["name"],
-    mode = codeParams["mode"],
     ip = codeParams["ip"],
     server_ip = codeParams["server_ip"]
 )

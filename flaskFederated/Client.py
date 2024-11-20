@@ -5,9 +5,8 @@ from flask import Flask, request
 import requests
 
 class Client():
-    def __init__(self, name, mode, ip, server_ip):
+    def __init__(self, name, ip, server_ip):
         self.name = name
-        self.mode = mode
         self.data_X = []
         self.data_Y = []
         self.model = None
@@ -41,18 +40,13 @@ class Client():
         report["numRecords"] = X.shape[0]
 
         if(not self.model):
-            self.model = get_model(mode = self.mode, inputDim = X.shape[1], outputDim = 1 if len(Y.shape) == 1 else Y.shape[1])
+            self.model = get_model()
 
-        if(self.mode == "keras"):
-            self.model.set_weights(weights)
-            fit_model(mode = self.mode, model = self.model, X = X, Y = Y)
-            report["weights"] = self.model.get_weights()
-        else:
-            self.model = fit_model(mode = self.mode, model = self.model, X = X, Y = Y, weights = weights[0], biases = weights[1])
-            report["weights"] = get_params(mode = self.mode, model = self.model)
+        self.model = fit_model(model = self.model, X = X, Y = Y, weights = weights[0], biases = weights[1])
+        report["weights"] = get_params(model = self.model)
 
-        print(f"{self.mode} Loss {self.name}: {get_loss(mode = self.mode, model = self.model, X = X, Y = Y, pred_Y = self.model.predict(X), target_Y = Y)}")
-        w, b = get_params(mode = self.mode, model = self.model)
+        print(f"Loss {self.name}: {get_loss(pred_Y = self.model.predict(X), target_Y = Y)}")
+        w, b = get_params(model = self.model)
         print(f"Weight {self.name}: {w}")
         print(f"Bias {self.name}: {b}")
 

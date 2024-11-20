@@ -5,8 +5,7 @@ import numpy as np
 import requests
 
 class Server:
-    def __init__(self, mode, ip, participationRatio, initialWeights):
-        self.mode = mode
+    def __init__(self, ip, participationRatio, initialWeights):
         self.C = participationRatio
         self.clients = []
         self.weights = initialWeights
@@ -51,20 +50,16 @@ class Server:
 
     def update_centralized_model(self, columnIdx):
         if(not self.model):
-            inputDim, outputDim = get_dataset_shape(columnIdx = columnIdx)
-            self.model = get_model(mode = self.mode, inputDim = inputDim, outputDim = outputDim)
+            self.model = get_model()
         
-        if(self.mode == "keras"):
-            self.model.set_weights(self.weights)
-        else:
-            self.model.coef_ = self.weights[0]
-            self.model.intercept_ = self.weights[1]        
+        self.model.coef_ = self.weights[0]
+        self.model.intercept_ = self.weights[1]        
 
     def test_model(self):
         # Have to send a JSON with columnIdx as a key to get only the desired column!
         columnIdx = request.json["columnIdx"] if request.is_json else -1
         self.update_centralized_model(columnIdx)
-        w, b = get_params(mode = self.mode, model = self.model)
+        w, b = get_params(model = self.model)
         print(f"Server Weight: {w}")
         print(f"Server Bias: {b}")
         return f"{w}, {b}\n"
