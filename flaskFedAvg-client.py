@@ -19,7 +19,7 @@ else:
 codeParams = get_code_params(jsonPath)
 
 numSplits = 5
-data_X, data_Y = get_splitted_dataset(numSplits = numSplits, columnIdx = codeParams["columnIdx"])
+data_X, data_Y = get_splitted_dataset(numSplits = numSplits)
 
 client = Client(name = codeParams["name"])
 

@@ -23,7 +23,7 @@ codeParams = get_code_params(jsonPath)
 
 server = Server(
     participationRatio = codeParams["participation_ratio"],
-    initialWeights = get_initial_weights(codeParams["columnIdx"])
+    initialWeights = get_initial_weights()
 )
 
 app = Flask(__name__)

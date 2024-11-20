@@ -12,22 +12,20 @@ def get_loss(pred_Y, target_Y):
 def get_params(model):
     return model.coef_, model.intercept_
 
-def get_initial_weights(columnIdx):
-    inDim, outDim = get_dataset_shape(columnIdx)
+def get_initial_weights():
+    inDim, outDim = get_dataset_shape()
     return [np.random.rand(outDim, inDim), np.random.rand(outDim)]
 
-def get_dataset(columnIdx = -1):
+def get_dataset():
     data_X, data_Y = datasets.load_diabetes(return_X_y = True)
-    if(columnIdx >= 0):
-        data_X = data_X[:, np.newaxis, columnIdx]
     return data_X, data_Y
 
-def get_splitted_dataset(numSplits, columnIdx = -1):
-    data_X, data_Y = get_dataset(columnIdx)
+def get_splitted_dataset(numSplits):
+    data_X, data_Y = get_dataset()
     return np.array_split(data_X, numSplits), np.array_split(data_Y, numSplits)
 
-def get_dataset_shape(columnIdx = -1):
-    data_X, data_Y = get_dataset(columnIdx)
+def get_dataset_shape():
+    data_X, data_Y = get_dataset()
     if(len(data_Y.shape) == 1):
         outDim = 1
     else:
