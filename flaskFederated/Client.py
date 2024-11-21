@@ -34,7 +34,7 @@ class Client():
         if(not self.model):
             self.model = get_model()
 
-        self.model = fit_model(model = self.model, X = X, Y = Y, weights = weights[0], biases = weights[1])
+        self.model = fit_model(model = self.model, X = X, Y = Y, weights = weights[0], biases = weights[1], batchSize = 16)
         report["weights"] = get_params(model = self.model)
 
         print(f"Loss {self.name}: {get_loss(pred_Y = self.model.predict(X), target_Y = Y)}")
