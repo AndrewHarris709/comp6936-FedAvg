@@ -2,10 +2,9 @@
 
 from flaskFederated.Client import Client
 from linearRegression.utils import get_splitted_dataset, get_code_params, get_weights_dejsonified, get_weights_jsonified
-from flask import Flask, request
 import sys
 from numpy.random import randint
-import requests
+import socketio
 
 if(not (len(sys.argv) > 1 and len(sys.argv) < 4)):
     print("Wrong format! Exiting...")
@@ -26,25 +25,19 @@ client = Client(name = codeParams["name"])
 rand_idx = randint(numSplits)
 client.add_data(new_X = data_X[rand_idx], new_Y = data_Y[rand_idx])
 
-app = Flask(__name__)
+sio = socketio.Client()
 
-@app.route("/train", methods=["POST"])
-def train_model():
-    if(not request.json):
-        return None
-
-    weights = get_weights_dejsonified(request.json["new_weights"])
+@sio.event
+def client_update(new_weights):
+    weights = get_weights_dejsonified(new_weights)
 
     report = client.train(weights)
     if not report:
         return None
-    
+
     report["weights"] = get_weights_jsonified(report["weights"])
-    requests.post(f"http://{codeParams['server_ip']}/update_weights", json = report)
-    return report
+    sio.emit('training_complete', report)
 
 if __name__ == '__main__':
-    ip, port = codeParams["ip"].split(":")
-    requests.post(f"http://{codeParams['server_ip']}/new_client", json = {"ip": codeParams["ip"]})
-    app.run(host = ip, port = int(port))
-
+    sio.connect(f"http://{codeParams['server_ip']}")
+    sio.wait()

@@ -11,7 +11,7 @@ class Server:
         self.clientWs = []
         self.update_centralized_model(initialWeights)
 
-    def start_clients(self):
+    def select_clients(self):
         if(len(self.clients)):
             self.m = int(max(round(self.C * len(self.clients)), 1))
             selectedClients = np.random.choice(self.clients, self.m, replace = False)
@@ -21,7 +21,7 @@ class Server:
     def update_weights(self, res):
         self.clientWs.append(res)
 
-        if(len(self.clientWs) == self.m):
+        if len(self.clientWs) == self.m:
             Nr = sum(res["numRecords"] for res in self.clientWs)
             newWeights = []
             for w in self.clientWs[0]["weights"]:
@@ -50,5 +50,8 @@ class Server:
     def get_weights(self):
         return [self.model.coef_, self.model.intercept_]
 
-    def add_client(self, ip):
-        self.clients.append(ip)
+    def add_client(self, id):
+        self.clients.append(id)
+
+    def remove_client(self, id):
+        self.clients.remove(id)

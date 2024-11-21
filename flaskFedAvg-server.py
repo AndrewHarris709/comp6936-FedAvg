@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, request
+from flask_socketio import SocketIO, emit
 from flaskFederated.Server import Server
 from linearRegression.utils import get_initial_weights, get_code_params, get_weights_jsonified, get_weights_dejsonified
 import sys
@@ -27,36 +28,40 @@ server = Server(
 )
 
 app = Flask(__name__)
-
-@app.route("/new_client", methods=['POST'])
-def new_client():
-    server.add_client(request.json["ip"])
-    return f"New Client! There are now {len(server.clients)} clients connected."
-
-@app.route("/update_weights", methods=['POST'])
-def update_weights():
-    report = request.json
-    report['weights'] = get_weights_dejsonified(request.json['weights'])
-    server.update_weights(report)
-    return "Update Weights Called!\n"
+socketio = SocketIO(app)
 
 @app.route("/", methods=['GET'])
 def start_clients():
-    selections = server.start_clients()
-    print(selections)
+    selections = server.select_clients()
     if selections is False:
         return "No Clients Yet!\n"
     
     weights = get_weights_jsonified(server.get_weights())
-    for clientIP in selections:
-        requests.post(f"http://{clientIP}/train", json = {"new_weights": weights})
+    for client in selections:
+        emit('client_update', weights, to=client, namespace="/")
 
-    return "Trained Clients!\n"
+    return "Training Requests Sent!\n"
 
 @app.route("/test", methods=['GET'])
 def collect_model():
     return server.test_model()
 
+@socketio.event
+def training_complete(report):
+    report['weights'] = get_weights_dejsonified(report['weights'])
+    server.update_weights(report)
+    print(f'Weights updated!')
+
+@socketio.event
+def connect(auth):
+    server.add_client(request.sid)
+    print('Client connected')
+
+@socketio.event
+def disconnect():
+    server.remove_client(request.sid)
+    print('Client disconnected')
+
 if __name__ == "__main__":
     ip, port = codeParams['ip'].split(":")
-    app.run(host = ip, port = int(port))
+    socketio.run(app, host = ip, port = int(port))
