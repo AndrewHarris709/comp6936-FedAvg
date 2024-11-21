@@ -6,10 +6,13 @@ import plotly.express as px
 from linearRegression.utils import get_weights_dejsonified
 
 from sklearn.linear_model import LinearRegression, SGDRegressor
-from sklearn.model_selection import cross_val_score
 import requests
 import numpy as np
 import pandas as pd
+from generators import CholeskyGenerator
+
+corr = np.array([[1, 0.9, 0.8], [0.9, 1, 0.92], [0.8, 0.92, 1]])
+test_data = CholeskyGenerator(corr).get(10000)
 
 score_results = pd.DataFrame([], columns=['All Data', 'Federated'])
 
@@ -23,7 +26,7 @@ app.layout = dbc.Card([
     dbc.CardHeader("Federated Learning Evaluation"),
     dbc.CardBody([
         dcc.Graph(id='main-graph', style={'width': '90vh', 'height': '90vh'}),
-        dcc.Interval(id='graph-timer', interval=5000)
+        dcc.Interval(id='graph-timer', interval=3000)
     ])
 ])
 
@@ -51,8 +54,8 @@ def graph_update(_):
     fed_model.intercept_ = fed_model_params[1]
 
     # Get a 5-fold cross validation score on both models
-    all_score = cross_val_score(all_model, all_X, all_Y, cv=5).mean()
-    fed_model = fed_model.score(all_X, all_Y)
+    all_score = all_model.score(test_data[:-1].T, test_data[-1])
+    fed_model = fed_model.score(test_data[:-1].T, test_data[-1])
 
     score_results.loc[len(score_results)] = [all_score, fed_model]
 

@@ -12,8 +12,7 @@ def get_loss(pred_Y, target_Y):
 def get_params(model):
     return model.coef_, model.intercept_
 
-def get_initial_weights():
-    inDim, outDim = get_dataset_shape()
+def get_initial_weights(outDim, inDim):
     return [np.random.rand(outDim, inDim), np.random.rand(outDim)]
 
 def get_dataset():

@@ -4,7 +4,7 @@ from flask_socketio import SocketIO, emit
 from flaskFederated.Server import Server
 from linearRegression.utils import get_initial_weights, get_code_params, get_weights_jsonified, get_weights_dejsonified
 import sys
-import requests
+import numpy as np
 
 '''
 Training Clients: curl http://server_address/
@@ -24,7 +24,7 @@ codeParams = get_code_params(jsonPath)
 
 server = Server(
     participationRatio = codeParams["participation_ratio"],
-    initialWeights = get_initial_weights()
+    initialWeights = [np.random.rand(2), np.array([np.random.rand()])]
 )
 
 app = Flask(__name__)

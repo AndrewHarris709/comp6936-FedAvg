@@ -13,7 +13,7 @@ class CholeskyGenerator:
             mults = np.array(mults)
 
         if mults is None:
-            mults = np.zeros(len(corr))
+            mults = np.ones(len(corr))
         if shifts is None:
             shifts = np.zeros(len(corr))
 
