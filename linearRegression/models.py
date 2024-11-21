@@ -5,6 +5,6 @@ def get_model():
         penalty = None,
         alpha = 0.0,
         l1_ratio = 0,
-        max_iter = 50000,
+        max_iter = 5,
         tol = None,
     )

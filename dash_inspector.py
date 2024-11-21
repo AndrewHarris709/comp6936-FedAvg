@@ -26,7 +26,7 @@ app.layout = dbc.Card([
     dbc.CardHeader("Federated Learning Evaluation"),
     dbc.CardBody([
         dcc.Graph(id='main-graph', style={'width': '90vh', 'height': '90vh'}),
-        dcc.Interval(id='graph-timer', interval=3000)
+        dcc.Interval(id='graph-timer', interval=1000)
     ])
 ])
 
@@ -53,7 +53,6 @@ def graph_update(_):
     fed_model.coef_ = fed_model_params[0]
     fed_model.intercept_ = fed_model_params[1]
 
-    # Get a 5-fold cross validation score on both models
     all_score = all_model.score(test_data[:-1].T, test_data[-1])
     fed_model = fed_model.score(test_data[:-1].T, test_data[-1])
 

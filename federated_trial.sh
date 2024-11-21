@@ -15,11 +15,12 @@ python flaskFedAvg-client.py -p flaskFederated.client2.params.json &
 python flaskFedAvg-client.py -p flaskFederated.client3.params.json &
 python flaskFedAvg-client.py -p flaskFederated.client4.params.json &
 python flaskFedAvg-client.py -p flaskFederated.client5.params.json &
+python dash_inspector.py &
 
 sleep 5
 
 counter=1
-while [ $counter -le 5 ]
+while [ $counter -le 50 ]
 do
     sleep 2
     curl http://localhost:5000
@@ -31,4 +32,4 @@ do
 done
 
 echo Iterations Done
-sleep 1
+sleep 5
