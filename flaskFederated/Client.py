@@ -10,12 +10,8 @@ class Client():
         self.model = None
 
     def add_data(self, new_X, new_Y):
-        if(new_X.shape[0] == 1):
-            self.data_X.append(new_X)
-            self.data_Y.append(new_Y)
-        else:
-            self.data_X.extend(new_X)
-            self.data_Y.extend(new_Y)            
+        self.data_X = new_X
+        self.data_Y = new_Y
 
     def train(self, weights: np.ndarray):
         if(len(self.data_X) == 0 or len(self.data_Y) == 0):
@@ -24,8 +20,8 @@ class Client():
 
         print(f"Start Training {self.name}...")
         report = {}
-        X = np.array(self.data_X)
-        Y = np.array(self.data_Y)
+        X = self.data_X
+        Y = self.data_Y
         report["numRecords"] = X.shape[0]
 
         if(not self.model):

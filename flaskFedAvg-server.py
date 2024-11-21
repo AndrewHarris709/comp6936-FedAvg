@@ -43,8 +43,22 @@ def start_clients():
     return "Training Requests Sent!\n"
 
 @app.route("/test", methods=['GET'])
-def collect_model():
+def test_model():
     return server.test_model()
+
+global_data = {}
+
+@app.route("/data/all", methods=['GET'])
+def get_all_data():
+    return global_data
+
+@app.route("/model", methods=['GET'])
+def get_model():
+    return get_weights_jsonified(server.get_weights())
+
+@socketio.event
+def data_update(data):
+    global_data[request.sid] = data
 
 @socketio.event
 def training_complete(report):
@@ -64,4 +78,4 @@ def disconnect():
 
 if __name__ == "__main__":
     ip, port = codeParams['ip'].split(":")
-    socketio.run(app, host = ip, port = int(port))
+    socketio.run(app, host = ip, port = int(port), allow_unsafe_werkzeug=True)

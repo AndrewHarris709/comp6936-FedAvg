@@ -5,6 +5,7 @@ from linearRegression.utils import get_splitted_dataset, get_code_params, get_we
 import sys
 from numpy.random import randint
 import socketio
+import time
 
 if(not (len(sys.argv) > 1 and len(sys.argv) < 4)):
     print("Wrong format! Exiting...")
@@ -40,4 +41,7 @@ def client_update(new_weights):
 
 if __name__ == '__main__':
     sio.connect(f"http://{codeParams['server_ip']}")
-    sio.wait()
+
+    while sio.connected:
+        time.sleep(2)
+        sio.emit('data_update', {'X': client.data_X.tolist(), 'Y': client.data_Y.tolist()})
