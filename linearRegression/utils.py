@@ -3,8 +3,19 @@ from sklearn import datasets
 import numpy as np
 import json
 
-def fit_model(model, X, Y, weights, biases):
-    return model.fit(X, Y, coef_init = weights, intercept_init = biases)
+def fit_model(model, X, Y, weights, biases, batchSize = 0):
+    if(batchSize == 0):
+        return model.fit(X, Y, coef_init = weights, intercept_init = biases)
+    
+    for i in range(0, X.shape[0], batchSize):
+        batch_X = X[i: i + batchSize]
+        batch_Y = Y[i: i + batchSize]
+        if(i == 0):
+            model = model.fit(batch_X, batch_Y, coef_init = weights, intercept_init = biases)
+        else:
+            model = model.partial_fit(batch_X, batch_Y)
+
+    return model
 
 def get_loss(pred_Y, target_Y):
     return mean_squared_error(pred_Y, target_Y)
