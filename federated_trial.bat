@@ -1,13 +1,14 @@
-start /b python flaskFedAvg-server.py -p flaskFederated.server.params.json
+#start /b python flaskFedAvg-server.py -p flaskFederated.server.params.json
 
-timeout /t 5 /nobreak > NUL
+#timeout /t 5 /nobreak > NUL
 
-start /b python flaskFedAvg-client.py -p flaskFederated.client1.params.json
-start /b python flaskFedAvg-client.py -p flaskFederated.client2.params.json
-start /b python flaskFedAvg-client.py -p flaskFederated.client3.params.json
-start /b python dash_inspector.py
+#start /b python flaskFedAvg-client.py -p flaskFederated.client1.params.json
+#start /b python flaskFedAvg-client.py -p flaskFederated.client2.params.json
+#start /b python flaskFedAvg-client.py -p flaskFederated.client3.params.json
+#start /b python flaskFedAvg-client.py -p flaskFederated.client4.params.json
+#start /b python flaskFedAvg-client.py -p flaskFederated.client5.params.json
 
-timeout /t 5 /nobreak > NUL
+#timeout /t 5 /nobreak > NUL
 
 for /l %%x in (1, 1, 50) do (
     timeout /t 10 /nobreak > NUL

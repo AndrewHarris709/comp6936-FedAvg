@@ -16,7 +16,7 @@ test_data = CholeskyGenerator(corr).get(10000)
 
 score_results = pd.DataFrame([], columns=['All Data', 'Federated'])
 
-server_ip = "http://localhost:5000"
+server_ip = "http://fed-server:5000"
 
 app = dash.Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP]
@@ -26,7 +26,7 @@ app.layout = dbc.Card([
     dbc.CardHeader("Federated Learning Evaluation"),
     dbc.CardBody([
         dcc.Graph(id='main-graph', style={'width': '90vh', 'height': '90vh'}),
-        dcc.Interval(id='graph-timer', interval=1000)
+        dcc.Interval(id='graph-timer', interval=5000)
     ])
 ])
 
@@ -64,4 +64,4 @@ def graph_update(_):
     return fig
 
 if __name__ == "__main__":
-    app.run_server()
+    app.run_server(port=8000, host="0.0.0.0")

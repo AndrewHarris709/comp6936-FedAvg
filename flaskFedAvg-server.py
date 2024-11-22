@@ -78,4 +78,4 @@ def disconnect():
 
 if __name__ == "__main__":
     ip, port = codeParams['ip'].split(":")
-    socketio.run(app, host = ip, port = int(port), allow_unsafe_werkzeug=True)
+    socketio.run(app, host = '0.0.0.0', port = int(port), allow_unsafe_werkzeug=True)

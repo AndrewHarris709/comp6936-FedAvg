@@ -1,0 +1,25 @@
+# https://stackoverflow.com/questions/27068596/how-to-include-files-outside-of-dockers-build-context
+
+services:
+  fed-server:
+    build:
+      context: .
+      dockerfile: docker/server/Dockerfile
+    ports:
+      - "5000:5000"
+  fed-client:
+    build:
+      context: .
+      dockerfile: docker/client/Dockerfile
+    depends_on:
+      - fed-server
+    restart: on-failure
+    deploy:
+      mode: replicated
+      replicas: 5
+  fed-inspector:
+    build:
+      context: .
+      dockerfile: docker/inspector/Dockerfile
+    ports:
+      - "8000:8000"
