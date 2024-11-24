@@ -1,4 +1,5 @@
 {
     "name": "Ali",
-    "server_ip": "fed-server:5000"
+    "server_ip": "fed-server:5000",
+    "failure_rate": 0.05
 }

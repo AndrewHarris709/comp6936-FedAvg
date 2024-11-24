@@ -1,6 +1,6 @@
 import dash
 import dash_bootstrap_components as dbc
-from dash import dcc, Output, Input
+from dash import dcc, Output, Input, no_update, ctx
 import plotly.express as px
 
 from linearRegression.utils import get_weights_dejsonified
@@ -25,16 +25,53 @@ app = dash.Dash(
 app.layout = dbc.Card([
     dbc.CardHeader("Federated Learning Evaluation"),
     dbc.CardBody([
-        dcc.Graph(id='main-graph', style={'width': '90vh', 'height': '90vh'}),
-        dcc.Interval(id='graph-timer', interval=5000)
+        dbc.Row([
+            dbc.Col([
+                dcc.Graph(id='main-graph', style={'width': '90vh', 'height': '90vh'}),
+                dcc.Interval(id='graph-timer', interval=500),
+            ], width=True),
+            dbc.Col([
+                dbc.Button("Reset", id="reset-button", color="danger"),
+                dbc.Button("Save", id="save-button", color="success"),
+                dcc.Download(id="download-dataframe"),
+            ], width="auto")
+        ])
     ])
 ])
+
 
 @app.callback(
     Output("main-graph", "figure"),
     Input("graph-timer", "n_intervals"),
+    Input("reset-button", "n_clicks"),
 )
-def graph_update(_):
+def update(n_intervals, n_clicks):
+    if ctx.triggered_id == 'reset-button':
+        if n_clicks is not None:
+            requests.get(f"{server_ip}/reset")
+            global score_results
+            score_results = pd.DataFrame([], columns=['All Data', 'Federated'])
+            return {}
+        return no_update
+
+    if n_intervals % 3 == 0:
+        return graph_update()
+    elif n_intervals % 3 == 1:
+        requests.get(f"{server_ip}/generate")
+    else:
+        requests.get(server_ip)
+    return no_update
+
+
+@app.callback(
+    Output("download-dataframe", "data"),
+    Input("save-button", "n_clicks"),
+    prevent_initial_call=True
+)
+def download_data(n_clicks):
+    return dcc.send_data_frame(score_results.to_csv, "fed_trial_data.csv")
+
+def graph_update():
     all_data_result = requests.get(f"{server_ip}/data/all").json()
     fed_model_params = get_weights_dejsonified(requests.get(f"{server_ip}/model").json())
 

@@ -17,12 +17,13 @@ else:
 
 codeParams = get_code_params(jsonPath)
 
-client = Client(name = codeParams["name"])
+client = Client(name = codeParams["name"], failure_rate = codeParams["failure_rate"])
 
 sio = socketio.Client()
 
 @sio.event
 def client_update(new_weights):
+    print("Training")
     weights = get_weights_dejsonified(new_weights)
 
     report = client.train(weights)
@@ -32,10 +33,17 @@ def client_update(new_weights):
     report["weights"] = get_weights_jsonified(report["weights"])
     sio.emit('training_complete', report)
 
-if __name__ == '__main__':
-    sio.connect(f"http://{codeParams['server_ip']}")
+@sio.event
+def reset():
+    client.reset()
 
-    while sio.connected:
-        time.sleep(5)
-        client.add_data()
-        sio.emit('data_update', {'X': client.data_X.tolist(), 'Y': client.data_Y.tolist()})
+@sio.event
+def generate_data():
+    print("Adding Data")
+    client.add_data()
+    sio.emit('data_update', {'X': client.data_X.tolist(), 'Y': client.data_Y.tolist()})
+
+if __name__ == '__main__':
+    print("Starting")
+    sio.connect(f"http://{codeParams['server_ip']}")
+    sio.wait()

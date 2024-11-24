@@ -5,17 +5,22 @@ from generators import CholeskyGenerator
 
 corr = np.array([[1, 0.9, 0.8], [0.9, 1, 0.92], [0.8, 0.92, 1]])
 
-class Client():
-    def __init__(self, name):
+class Client:
+    def __init__(self, name, failure_rate):
         self.name = name
         self.model = None
         self.generator = CholeskyGenerator(corr)
+        self.failure_rate = failure_rate
+        self.rng = np.random.default_rng()
 
         initial = self.generator.get(2)
         self.data_X = initial[:-1].T
         self.data_Y = initial[-1]
 
     def add_data(self):
+        if self.failure_rate > self.rng.uniform():
+            return
+
         new_data = self.generator.get(1)
         self.data_X = np.append(self.data_X, new_data[:-1].T, axis=0)
         self.data_Y = np.append(self.data_Y, new_data[-1])
@@ -43,6 +48,12 @@ class Client():
         print(f"Bias {self.name}: {b}")
 
         return report
+
+    def reset(self):
+        initial = self.generator.get(2)
+        self.data_X = initial[:-1].T
+        self.data_Y = initial[-1]
+        self.model = None
 
     def get_model(self):
         return self.model

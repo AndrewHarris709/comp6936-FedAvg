@@ -9,6 +9,7 @@ class Server:
         self.m = 0
         self.model = None
         self.clientWs = []
+        self.initialWeights = initialWeights
         self.update_centralized_model(initialWeights)
 
     def select_clients(self):
@@ -40,12 +41,6 @@ class Server:
         
         self.model.coef_ = weights[0]
         self.model.intercept_ = weights[1]
-
-    def test_model(self):
-        w, b = get_params(model = self.model)
-        print(f"Server Weight: {w}")
-        print(f"Server Bias: {b}")
-        return f"{w}, {b}\n"
     
     def get_weights(self):
         return [self.model.coef_, self.model.intercept_]
@@ -55,3 +50,8 @@ class Server:
 
     def remove_client(self, id):
         self.clients.remove(id)
+
+    def reset(self):
+        self.m = 0
+        self.clientWs = []
+        self.update_centralized_model(self.initialWeights)

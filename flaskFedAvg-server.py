@@ -6,10 +6,6 @@ from linearRegression.utils import get_initial_weights, get_code_params, get_wei
 import sys
 import numpy as np
 
-'''
-Training Clients: curl http://server_address/
-Getting Centralized Model Params: curl http://server_address/test
-'''
 
 if(not (len(sys.argv) > 1 and len(sys.argv) < 4)):
     print("Wrong format! Exiting...")
@@ -42,9 +38,14 @@ def start_clients():
 
     return "Training Requests Sent!\n"
 
-@app.route("/test", methods=['GET'])
+@app.route("/reset", methods=['GET'])
 def test_model():
-    return server.test_model()
+    global global_data
+    global_data = {}
+    server.reset()
+    emit("reset", namespace="/", broadcast=True)
+    return "System has been reset."
+
 
 global_data = {}
 
@@ -55,6 +56,11 @@ def get_all_data():
 @app.route("/model", methods=['GET'])
 def get_model():
     return get_weights_jsonified(server.get_weights())
+
+@app.route("/generate", methods=['GET'])
+def generate_data():
+    emit('generate_data', namespace="/", broadcast=True)
+    return "Generation Request Sent"
 
 @socketio.event
 def data_update(data):
