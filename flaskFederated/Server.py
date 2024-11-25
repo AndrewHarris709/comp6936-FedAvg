@@ -9,6 +9,7 @@ class Server:
         self.m = 0
         self.model = None
         self.clientWs = []
+        self.clientWRecord = {}
         self.initialWeights = initialWeights
         self.update_centralized_model(initialWeights)
 
@@ -19,8 +20,9 @@ class Server:
             return selectedClients
         return False
         
-    def update_weights(self, res):
+    def update_weights(self, res, client):
         self.clientWs.append(res)
+        self.clientWRecord[client] = res['weights']
 
         if len(self.clientWs) == self.m:
             Nr = sum(res["numRecords"] for res in self.clientWs)
@@ -45,6 +47,9 @@ class Server:
     def get_weights(self):
         return [self.model.coef_, self.model.intercept_]
 
+    def get_client_weights(self):
+        return self.clientWRecord
+
     def add_client(self, id):
         self.clients.append(id)
 
@@ -54,4 +59,5 @@ class Server:
     def reset(self):
         self.m = 0
         self.clientWs = []
+        self.clientWRecord = {}
         self.update_centralized_model(self.initialWeights)

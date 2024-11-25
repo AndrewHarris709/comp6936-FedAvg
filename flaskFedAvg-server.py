@@ -57,6 +57,12 @@ def get_all_data():
 def get_model():
     return get_weights_jsonified(server.get_weights())
 
+@app.route('/model/clients', methods=['GET'])
+def get_client_models():
+    clients_weights = server.get_client_weights()
+    print(clients_weights, flush=True)
+    return {client: get_weights_jsonified(weights) for client, weights in clients_weights.items()}
+
 @app.route("/generate", methods=['GET'])
 def generate_data():
     emit('generate_data', namespace="/", broadcast=True)
@@ -69,7 +75,7 @@ def data_update(data):
 @socketio.event
 def training_complete(report):
     report['weights'] = get_weights_dejsonified(report['weights'])
-    server.update_weights(report)
+    server.update_weights(report, request.sid)
     print(f'Weights updated!')
 
 @socketio.event
