@@ -1,9 +1,8 @@
 from linearRegression.models import get_model
-from linearRegression.utils import get_params
 import numpy as np
 
 class Server:
-    def __init__(self, participationRatio, initialWeights):
+    def __init__(self, participationRatio, initialWeights, max_iter: int = 1):
         self.C = participationRatio
         self.clients = []
         self.m = 0
@@ -11,6 +10,7 @@ class Server:
         self.clientWs = []
         self.clientWRecord = {}
         self.initialWeights = initialWeights
+        self.max_iter = max_iter
         self.update_centralized_model(initialWeights)
 
     def select_clients(self):
@@ -39,7 +39,7 @@ class Server:
 
     def update_centralized_model(self, weights):
         if(not self.model):
-            self.model = get_model()
+            self.model = get_model(max_iter=self.max_iter)
         
         self.model.coef_ = weights[0]
         self.model.intercept_ = weights[1]

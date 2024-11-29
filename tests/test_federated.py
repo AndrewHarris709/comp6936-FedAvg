@@ -1,42 +1,49 @@
-from localFederated.Client import Client
-from localFederated.Server import Server
+from charset_normalizer.cd import filter_alt_coherence_matches
+
+from flaskFederated.Client import Client
+from flaskFederated.Server import Server
 from linearRegression.models import get_model
-from linearRegression.utils import get_initial_weights, fit_model, get_params, get_dataset, get_splitted_dataset
+from linearRegression.utils import fit_model, get_params, get_initial_weights
 
 from pytest import fixture
 import numpy
+from sklearn import datasets
 
 @fixture
-def mode():
-    return "sklearnSGD"
+def single_X():
+    return datasets.load_diabetes(return_X_y=True)[0][:,4].reshape(-1, 1)
 
 @fixture
-def idx():
-    return 3
+def single_Y():
+    return datasets.load_diabetes(return_X_y=True)[1]
 
-def test_single_client_single_column_convergence(mode, idx):
-    data_X, data_Y = get_dataset(columnIdx = idx)
+def test_single_client_single_column_convergence(single_X, single_Y):
+    client_1 = Client(name = "1", failure_rate=0)
+    client_1.data_X = single_X
+    client_1.data_Y = single_Y
 
-    client_1 = Client(name = "1", mode = mode)
-    client_1.add_data(new_X = data_X, new_Y = data_Y)
-
+    initial_weights = get_initial_weights(1)
     server = Server(
-        mode = mode,
         participationRatio = 1,
-        initialWeights = get_initial_weights(mode = mode, columnIdx = idx),
-        clients = [client_1]
+        initialWeights = initial_weights,
+        max_iter=10000
     )
+    server.add_client(client_1.name)
+    assert server.select_clients() == [client_1.name]
 
-    server.start_clients()
-    w_fed, b_fed = server.test_model(columnIdx = idx)
+    client_result = client_1.train(server.get_weights())
+    server.update_weights(client_result, client_1.name)
 
-    model = get_model(mode = "sklearn")
-    model = fit_model("sklearn", model, data_X, data_Y)
-    w_sklearn, b_sklearn = get_params("sklearn", model)
+    w_fed, b_fed = server.get_weights()
 
-    assert numpy.allclose(w_fed, w_sklearn, atol = 5) and numpy.allclose(b_fed, b_sklearn, atol = 5)
+    model = get_model(max_iter=10000)
+    model = fit_model(model, single_X, single_Y, initial_weights[0], initial_weights[1], batchSize=16)
+    w_sklearn, b_sklearn = get_params(model)
 
-def test_multi_client_single_column_convergence(mode, idx):
+    assert numpy.allclose(w_fed, w_sklearn)
+    assert numpy.allclose(b_fed, b_sklearn)
+
+def test_multi_client_single_column_convergence():
     data_X, data_Y = get_dataset(columnIdx = idx)
 
     client_1 = Client(name = "1", mode = mode)
@@ -63,7 +70,7 @@ def test_multi_client_single_column_convergence(mode, idx):
 
     assert numpy.allclose(w_fed, w_sklearn, atol = 5) and numpy.allclose(b_fed, b_sklearn, atol = 5)
 
-def test_similar_wb_client_server(mode):
+def test_similar_wb_client_server():
     data_X, data_Y = get_dataset()
 
     client_1 = Client(name = "1", mode = mode)
@@ -94,7 +101,7 @@ def test_similar_wb_client_server(mode):
 
     assert cliServ1 and cliServ2 and cliServ3
 
-def test_participation_ratio(mode):
+def test_participation_ratio():
     data_X, data_Y = get_dataset()
 
     client_1 = Client(name = "1", mode = mode)
@@ -123,7 +130,7 @@ def test_participation_ratio(mode):
 
     assert clientCnt == round(0.5 * 4)
 
-def test_split_data_single_column_convergence(mode, idx):
+def test_split_data_single_column_convergence(idx):
     data_X, data_Y = get_splitted_dataset(numSplits = 3, columnIdx = idx)
 
     client_1 = Client(name = "1", mode = mode)
@@ -151,7 +158,7 @@ def test_split_data_single_column_convergence(mode, idx):
 
     assert numpy.allclose(w_fed, w_sklearn, atol = 15) and numpy.allclose(b_fed, b_sklearn, atol = 15)
 
-def test_multiple_training_single_column_convergence(mode, idx):
+def test_multiple_training_single_column_convergence(idx):
     data_X, data_Y = get_splitted_dataset(numSplits = 2, columnIdx = idx)
 
     client_1 = Client(name = "1", mode = mode)
@@ -179,7 +186,7 @@ def test_multiple_training_single_column_convergence(mode, idx):
 
     assert numpy.allclose(w_fed, w_sklearn, atol = 10) and numpy.allclose(b_fed, b_sklearn, atol = 10)
 
-def test_no_training_data(mode):
+def test_no_training_data():
     client_1 = Client(name = "1", mode = mode)
     client_2 = Client(name = "2", mode = mode)
 
@@ -203,7 +210,7 @@ def test_no_training_data(mode):
 
     assert compare_1 and compare_2 and compare_3
 
-def test_client_selection(mode):
+def test_client_selection():
     data_X, data_Y = get_splitted_dataset(numSplits = 5)
 
     client_1 = Client(name = "1", mode = mode)
@@ -234,7 +241,7 @@ def test_client_selection(mode):
     
     assert cnt == 1 or cnt == 2 or cnt == 3
 
-def test_training_lean(mode):
+def test_training_lean():
     split_data_X, split_data_Y = get_splitted_dataset(numSplits = 10)
     data_X, data_Y = get_dataset()
 
@@ -257,7 +264,7 @@ def test_training_lean(mode):
     assert numpy.linalg.norm(w1 - w_fed) < numpy.linalg.norm(w2 - w_fed)
     assert numpy.linalg.norm(b1 - b_fed) < numpy.linalg.norm(b2 - b_fed)
 
-def test_continuous_new_client_data(mode, idx):
+def test_continuous_new_client_data(idx):
     data_X, data_Y = get_splitted_dataset(numSplits = 3, columnIdx = idx)
 
     client_1 = Client(name = "1", mode = mode)

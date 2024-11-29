@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 from flaskFederated.Client import Client
-from linearRegression.utils import get_splitted_dataset, get_code_params, get_weights_dejsonified, get_weights_jsonified
+from linearRegression.utils import get_code_params, get_weights_dejsonified, get_weights_jsonified
 import sys
 import socketio
-import time
 
 if(not (len(sys.argv) > 1 and len(sys.argv) < 4)):
     print("Wrong format! Exiting...")
