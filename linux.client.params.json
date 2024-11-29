@@ -1,0 +1,5 @@
+{
+    "name": "Ali",
+    "server_ip": "localhost:5000",
+    "failure_rate": 0.05
+}
