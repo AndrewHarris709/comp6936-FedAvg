@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from flaskFederated.Client import Client
 from linearRegression.utils import get_code_params, get_weights_dejsonified, get_weights_jsonified
+from federated import FederatedClient
 import sys
 import socketio
 
@@ -16,7 +16,7 @@ else:
 
 codeParams = get_code_params(jsonPath)
 
-client = Client(name = codeParams["name"], failure_rate = codeParams["failure_rate"])
+client = FederatedClient(name = codeParams["name"], failure_rate = codeParams["failure_rate"])
 
 sio = socketio.Client()
 

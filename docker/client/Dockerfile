@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./flaskFederated ./flaskFederated
 COPY ./generators ./generators
 COPY ./linearRegression ./linearRegression
-COPY ./flaskFedAvg-client.py .
+COPY ./Client.py ./Client.py
 COPY ./flaskFederated.client.params.json .
 
-CMD [ "python", "./flaskFedAvg-client.py", "-p", "flaskFederated.client.params.json" ]
+CMD [ "python", "./Client.py", "-p", "flaskFederated.client.params.json" ]

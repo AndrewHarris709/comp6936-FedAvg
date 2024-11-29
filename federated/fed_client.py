@@ -5,7 +5,7 @@ from generators import CholeskyGenerator
 
 corr = np.array([[1, 0.9, 0.8], [0.9, 1, 0.92], [0.8, 0.92, 1]])
 
-class Client:
+class FederatedClient:
     def __init__(self, name, failure_rate):
         self.name = name
         self.model = None

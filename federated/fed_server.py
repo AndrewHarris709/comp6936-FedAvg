@@ -1,7 +1,7 @@
 from linearRegression.models import get_model
 import numpy as np
 
-class Server:
+class FederatedServer:
     def __init__(self, participationRatio, initialWeights, max_iter: int = 1):
         self.C = participationRatio
         self.clients = []

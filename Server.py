@@ -1,7 +1,10 @@
 #!/usr/bin/env python
+import os
+print(os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
-from flaskFederated.Server import Server
+from federated import FederatedServer
 from linearRegression.utils import get_initial_weights, get_code_params, get_weights_jsonified, get_weights_dejsonified
 import sys
 import numpy as np
@@ -18,7 +21,7 @@ else:
 
 codeParams = get_code_params(jsonPath)
 
-server = Server(
+server = FederatedServer(
     participationRatio = codeParams["participation_ratio"],
     initialWeights = [np.random.rand(2), np.array([np.random.rand()])]
 )
