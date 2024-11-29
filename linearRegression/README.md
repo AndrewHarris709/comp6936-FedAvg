@@ -2,6 +2,8 @@
 
 In this package, you can find files related to local models.
 
+Simple linear regression model is used. The structure here allows to easily add more sophisticated models as well such as neural network, decision trees, etc. Initially, linear regression was emulated by implementing it using neural networks (Keras).
+
 ## models.py
 
 We are using SGDRegressor from sklearn as the local model. Defining the model is as simple as calling ```get_model()```. This methods will return a SGDRegressor model. Number of training iterations can also be specified by passing ```max_iter``` to the method. Hyperparameters for this model are set by default to find the best possible linear fit.
