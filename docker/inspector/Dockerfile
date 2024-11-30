@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./flaskFederated ./flaskFederated
 COPY ./generators ./generators
 COPY ./linearRegression ./linearRegression
 COPY ./dash_inspector.py .
