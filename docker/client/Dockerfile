@@ -10,5 +10,6 @@ COPY ./generators ./generators
 COPY ./linearRegression ./linearRegression
 COPY ./Client.py ./Client.py
 COPY ./flaskFederated.client.params.json .
+COPY ./generation.config.json ./generation.config.json
 
 CMD [ "python", "./Client.py", "-p", "flaskFederated.client.params.json" ]

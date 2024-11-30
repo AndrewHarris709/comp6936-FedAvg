@@ -1,15 +1,13 @@
 import numpy as np
 from linearRegression.models import get_model
 from linearRegression.utils import fit_model, get_loss, get_params
-from generators import CholeskyGenerator
-
-corr = np.array([[1, 0.9, 0.8], [0.9, 1, 0.92], [0.8, 0.92, 1]])
+from generators import from_config
 
 class FederatedClient:
-    def __init__(self, name, failure_rate):
+    def __init__(self, name, failure_rate, gen_config_file):
         self.name = name
         self.model = None
-        self.generator = CholeskyGenerator(corr)
+        self.generator = from_config(gen_config_file)
         self.failure_rate = failure_rate
         self.rng = np.random.default_rng()
 

@@ -15,4 +15,4 @@ do
     python Client.py -p linux.client.params.json &
 done
 
-python dash_inspector.py http://localhost:5000
+python dash_inspector.py http://localhost:5000 generation.config.json

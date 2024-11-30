@@ -10,20 +10,17 @@ import numpy as np
 import pandas as pd
 
 from linearRegression.utils import get_weights_dejsonified
-from generators import CholeskyGenerator
+from generators import from_config
 
 import sys
-
-corr = np.array([[1, 0.9, 0.8], [0.9, 1, 0.92], [0.8, 0.92, 1]])
-test_data = CholeskyGenerator(corr).get(10000)
 
 score_results = pd.DataFrame([], columns=['All Data', 'Federated'])
 client_results = pd.DataFrame([], columns=[])
 
-if not len(sys.argv) > 1:
-    server_ip = "http://fed-server:5000"
-else:
-    server_ip = sys.argv[1]
+server_ip = sys.argv[1]
+generator = from_config(sys.argv[2])
+
+test_data = generator.get(10000)
 
 app = dash.Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP]

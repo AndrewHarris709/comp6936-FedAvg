@@ -1,4 +1,5 @@
 {
     "participation_ratio": 0.5,
-    "port": 5000
+    "port": 5000,
+    "gen_config_file": "generation.config.json"
 }

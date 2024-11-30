@@ -1,5 +1,6 @@
 {
     "name": "Ali",
     "server_ip": "localhost:5000",
-    "failure_rate": 0.05
+    "failure_rate": 0.05,
+    "gen_config_file": "generation.config.json"
 }

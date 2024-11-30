@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-import os
-print(os.path.dirname(os.path.abspath(__file__)))
-
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
 from federated import FederatedServer
-from linearRegression.utils import get_initial_weights, get_code_params, get_weights_jsonified, get_weights_dejsonified
+from linearRegression.utils import get_code_params, get_weights_jsonified, get_weights_dejsonified
+from generators import from_config
 import sys
 import numpy as np
 
@@ -20,10 +18,13 @@ else:
     sys.exit(0)
 
 codeParams = get_code_params(jsonPath)
+generator = from_config(codeParams['gen_config_file'])
 
 server = FederatedServer(
     participationRatio = codeParams["participation_ratio"],
-    initialWeights = [np.random.rand(2), np.array([np.random.rand()])]
+    # Output from generator is one large matrix with X and Y, so we will take the generated shape
+    # subtracted by one to split by X & Y.
+    initialWeights = [np.random.rand(generator.get().shape[0] - 1), np.array([np.random.rand()])]
 )
 
 app = Flask(__name__)

@@ -10,6 +10,7 @@ COPY ./generators ./generators
 COPY ./linearRegression ./linearRegression
 COPY ./Server.py .
 COPY ./flaskFederated.server.params.json .
+COPY ./generation.config.json .
 
 EXPOSE 5000
 

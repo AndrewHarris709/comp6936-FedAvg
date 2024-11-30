@@ -16,7 +16,9 @@ else:
 
 codeParams = get_code_params(jsonPath)
 
-client = FederatedClient(name = codeParams["name"], failure_rate = codeParams["failure_rate"])
+client = FederatedClient(name = codeParams["name"],
+                         failure_rate = codeParams["failure_rate"],
+                         gen_config_file = codeParams["gen_config_file"])
 
 sio = socketio.Client()
 
