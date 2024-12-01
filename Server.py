@@ -43,7 +43,7 @@ def start_clients():
     return "Training Requests Sent!\n"
 
 @app.route("/reset", methods=['GET'])
-def test_model():
+def reset():
     global global_data
     global_data = {}
     server.reset()

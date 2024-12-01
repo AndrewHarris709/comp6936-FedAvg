@@ -2,7 +2,9 @@
 
 In this package, you can find files related to local models.
 
-Simple linear regression model is used. The structure here allows to easily add more sophisticated models as well such as neural network, decision trees, etc. Initially, linear regression was emulated by implementing it using neural networks (Keras).
+A simple linear regression model is used. The structure here allows to easily add more sophisticated models as well such as neural network, decision trees, etc. Initially, linear regression was emulated by implementing it using neural networks (Keras).
+
+When transferring weights from the client to the server, and from the server to the inspector, an additional SGDRegressor is created. This model is not fitted with data, but provided with `coef_` & `intercept_` values. This allows us to evaluate our remotely-defined weights.
 
 ## models.py
 
